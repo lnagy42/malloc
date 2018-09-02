@@ -57,18 +57,16 @@ void	ft_putaddr(void *addr)
 	ft_putsize_base((size_t)addr, 16);
 }
 
-void	show_alloc_mem(void)
+void	put_region(t_block *beginlist_region, char *area, size_t *total)
 {
-	t_block	*region;
 	t_block	*block;
 
-	region = g_begin.tiny;
-	ft_putstr("TINY : ");
-	ft_putaddr(region->data);
-	ft_putstr("\n");
-	while (region)
+	while (beginlist_region)
 	{
-		block = (t_block *)region->data;
+		ft_putstr(area);
+		ft_putaddr(beginlist_region->data);
+		ft_putstr("\n");
+		block = (t_block *)beginlist_region->data;
 		while (block)
 		{
 			if (block->used)
@@ -79,16 +77,26 @@ void	show_alloc_mem(void)
 				ft_putstr(" : ");
 				ft_putsize_base(block->size, 10);
 				ft_putstr(" octets\n");
+				*total += block->size;
 			}
 			block = block->next;	
 		}
-		region = region->next;
+		beginlist_region = beginlist_region->next;
 	}
 }
 
-int main(void)
+void	show_alloc_mem(void)
 {
-	ft_malloc(13);
-	show_alloc_mem();
-	return (0);
+	size_t	total;
+
+	total = 0;
+	if (g_begin.tiny)
+		put_region(g_begin.tiny, "TINY : ", &total);
+	if (g_begin.small)
+		put_region(g_begin.small, "SMALL : ", &total);
+	if (g_begin.large)
+		put_region(g_begin.large, "LARGE : ", &total);
+	ft_putstr("Total : ");
+	ft_putsize_base(total, 10);
+	ft_putstr(" octets\n");
 }
