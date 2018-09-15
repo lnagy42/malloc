@@ -1,0 +1,32 @@
+'F' fait ou F 'F' fait
+*void*
+: prev->region->next = region->next
+: munmap region fait
+
+M 'F' ou M M 'F' ou M M M 'F' ou ...
+M     ou M M     ou M M M     ou ...
+: prev->block->next = NULL fait
+
+F 'F' M  fait
+F     M
+: prev->block->next = block->next
+
+M 'F' F M  fait
+M  F    M
+: block->next = block->next->next
+
+M F 'F' F 
+M F 'F'   
+M F       
+
+M F 'F' fait
+M F
+
+'F' F
+
+M 10 10
+M 2  10
+M 10 10
+
+M----
+M--  M

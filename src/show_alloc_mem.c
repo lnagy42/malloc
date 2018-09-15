@@ -1,4 +1,5 @@
 #include "../inc/malloc.h"
+#include <unistd.h>
 
 int		ft_strlen(char *str)
 {
@@ -9,8 +10,6 @@ int		ft_strlen(char *str)
 		i++;
 	return (i);
 }
-
-#include <unistd.h>
 
 void	ft_putstr(char *s)
 {
@@ -65,6 +64,7 @@ void	put_region(t_block *beginlist_region, char *area, size_t *total)
 	{
 		ft_putstr(area);
 		ft_putaddr(beginlist_region->data);
+		put_size_dbg(beginlist_region->size);
 		ft_putstr("\n");
 		block = (t_block *)beginlist_region->data;
 		while (block)
@@ -76,8 +76,20 @@ void	put_region(t_block *beginlist_region, char *area, size_t *total)
 				ft_putaddr(block->data + block->size);
 				ft_putstr(" : ");
 				ft_putsize_base(block->size, 10);
-				ft_putstr(" octets\n");
+				ft_putstr(" octets | max: ");
+				ft_putsize_base(block->max_size, 10);
+				ft_putstr("\n");
 				*total += block->size;
+			}
+			else if (DEBUG)
+			{
+				ft_putaddr(block->data);
+				ft_putstr(" - ");
+				ft_putaddr(block->data + block->size);
+				ft_putstr(" : ");
+				ft_putstr(" *freed* ");
+				ft_putsize_base(block->max_size, 10);
+				ft_putstr(" octets\n");
 			}
 			block = block->next;	
 		}
