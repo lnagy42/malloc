@@ -2,6 +2,7 @@
 # define MALLOC_H
 # include <stddef.h>
 # include <sys/mman.h>
+# include <pthread.h>
 
 # ifndef DEBUG
 #  define DEBUG 0
@@ -35,6 +36,7 @@ typedef struct		s_zone
 }					t_zone;
 
 t_region			g_begin;
+pthread_mutex_t		g_mutex;
 
 void	*ft_malloc(size_t size);
 void	ft_free(void *ptr);

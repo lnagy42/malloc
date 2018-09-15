@@ -2,6 +2,8 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
+pthread_mutex_t g_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+
 size_t		align(size_t size, size_t align)
 {
 	size_t	shift;

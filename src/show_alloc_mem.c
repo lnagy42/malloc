@@ -97,7 +97,7 @@ void	put_region(t_block *beginlist_region, char *area, size_t *total)
 	}
 }
 
-void	show_alloc_mem(void)
+void	show_alloc_mem_thread_unsafe(void)
 {
 	size_t	total;
 
@@ -111,4 +111,18 @@ void	show_alloc_mem(void)
 	ft_putstr("Total : ");
 	ft_putsize_base(total, 10);
 	ft_putstr(" octets\n");
+}
+
+void	show_alloc_mem(void)
+{
+	int	ret;
+
+		if ((ret = pthread_mutex_lock(&g_mutex)) != 0)
+	{
+		mutex_error("error mutex lock: ", ret);
+		return ;
+	}
+	show_alloc_mem_thread_unsafe();
+	if ((ret = pthread_mutex_unlock(&g_mutex)) != 0)
+		mutex_error("error mutex unlock: ", ret);
 }
