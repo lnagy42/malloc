@@ -75,7 +75,7 @@ void	free_last_block(t_zone *prev, t_zone *current) /*fonction de l'enfer*/
 }
 
 
-void	ft_free(void *ptr)
+void	ft_free_thread_unsafe(void *ptr)
 {
 	t_zone	current;
 	t_zone	prev;
@@ -120,4 +120,17 @@ void	ft_free(void *ptr)
 	}
 }
 
+void	ft_free(void *ptr)
+{
+	int	ret;
+
+	if ((ret = pthread_mutex_lock(&g_mutex)) != 0)
+	{
+		mutex_error("error mutex lock: ", ret);
+		return ;
+	}
+	ft_free_thread_unsafe(ptr);
+	if ((ret = pthread_mutex_unlock(&g_mutex)) != 0)
+		mutex_error("error mutex unlock: ", ret);
+}
 

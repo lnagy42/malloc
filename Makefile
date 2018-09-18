@@ -33,7 +33,7 @@ LINK = libft_malloc.so
 
 SRC_NAME = malloc.c\
 		free.c\
-		reallo.c\
+		realloc.c\
 		show_alloc_mem.c\
 		print_debug.c
 

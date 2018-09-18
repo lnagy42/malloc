@@ -146,7 +146,7 @@ static void real_sodo(
 	if (ptr == NULL || x == 0)
 		return ;
 	tab_ptr[i].ptr = ft_realloc(tab_ptr[i].ptr, x);
-	//	printf("arg: %d %zu", x, (size_t)tab_ptr[i].ptr);
+		printf("arg: %d %zu", x, (size_t)tab_ptr[i].ptr);
 	if (tab_ptr[i].ptr == NULL) {
 		printf("BAD REALLOC\n");
 		exit (1);

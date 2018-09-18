@@ -97,6 +97,16 @@ void	put_region(t_block *beginlist_region, char *area, size_t *total)
 	}
 }
 
+void	ft_putstr_fd(char *s, int fd)
+{
+	write(fd, s, ft_strlen(s));
+}
+
+void	mutex_error(char *s, int ret)
+{
+	ft_putstr_fd(s, 2);
+}
+
 void	show_alloc_mem_thread_unsafe(void)
 {
 	size_t	total;
@@ -117,7 +127,7 @@ void	show_alloc_mem(void)
 {
 	int	ret;
 
-		if ((ret = pthread_mutex_lock(&g_mutex)) != 0)
+	if ((ret = pthread_mutex_lock(&g_mutex)) != 0)
 	{
 		mutex_error("error mutex lock: ", ret);
 		return ;

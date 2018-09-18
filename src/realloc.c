@@ -12,7 +12,7 @@
 
 #include "../inc/malloc.h"
 
-void	*ft_realloc(void *ptr, size_t size)
+void	*ft_realloc_thread_unsafe(void *ptr, size_t size)
 {
 	t_zone	current;
 	t_zone	prev;
@@ -22,11 +22,11 @@ void	*ft_realloc(void *ptr, size_t size)
 	put_request_realloc_dbg(ptr, size);
 	size = align(size, PADDING);
 	if (!ptr)
-		return (ft_malloc(size));
+		return (ft_malloc_thread_unsafe(size));
 	else if (size == 0)
 	{
-		ft_free(ptr);
-		return(ft_malloc(0));
+		ft_free_thread_unsafe(ptr);
+		return(ft_malloc_thread_unsafe(0));
 	}
 	current = find_block(ptr, &prev);
 	if (!current.block)
@@ -50,8 +50,24 @@ void	*ft_realloc(void *ptr, size_t size)
 		current.block->max_size = size;
 		return (put_ret_addr_dbg(ptr));
 	}
-	new_addr = ft_malloc(size);
+	new_addr = ft_malloc_thread_unsafe(size);
 	new_addr = ft_memcpy(new_addr, ptr, current.block->size);
-	ft_free(ptr);
+	ft_free_thread_unsafe(ptr);
 	return (new_addr);
+}
+
+void	*ft_realloc(void *ptr, size_t size)
+{
+	int	ret;
+	t_block	*addr;
+
+	if ((ret = pthread_mutex_lock(&g_mutex)) != 0)
+	{
+		mutex_error("error mutex lock: ", ret);
+		return (NULL);
+	}
+	addr = ft_realloc_thread_unsafe(addr, size);
+	if ((ret = pthread_mutex_unlock(&g_mutex)) != 0)
+		mutex_error("error mutex unlock: ", ret);
+	return (addr);
 }

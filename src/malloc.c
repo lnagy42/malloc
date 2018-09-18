@@ -117,7 +117,7 @@ t_block	*pushback_block(size_t size, size_t region_size, t_block *region)
 	return ((t_block *)prev.region->next->data);
 }
 
-void	*ft_malloc(size_t size)
+void	*ft_malloc_thread_unsafe(size_t size)
 {
 	t_block	**list;
 	t_block	*region;
@@ -132,4 +132,20 @@ void	*ft_malloc(size_t size)
 	if ((block = pushback_block(size, region_size, *list)))
 		return (put_ret_addr_dbg(block->data));
 	return (put_ret_addr_dbg(NULL));
+}
+
+void	*ft_malloc(size_t size)
+{
+	int	ret;
+	t_block	*addr;
+
+	if ((ret = pthread_mutex_lock(&g_mutex)) != 0)
+	{
+		mutex_error("error mutex lock: ", ret);
+		return (NULL);
+	}
+	addr = ft_malloc_thread_unsafe(size);
+	if ((ret = pthread_mutex_unlock(&g_mutex)) != 0)
+		mutex_error("error mutex unlock: ", ret);
+	return (addr);
 }
