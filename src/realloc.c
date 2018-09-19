@@ -6,7 +6,7 @@
 /*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/13 17:46:16 by jfortin           #+#    #+#             */
-/*   Updated: 2018/09/15 13:25:37 by jfortin          ###   ########.fr       */
+/*   Updated: 2018/09/19 16:50:08 by jfortin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	*ft_realloc_thread_unsafe(void *ptr, size_t size)
 	size_t	left_region;
 
 	put_request_realloc_dbg(ptr, size);
-	size = align(size, PADDING);
 	if (!ptr)
 		return (ft_malloc_thread_unsafe(size));
 	else if (size == 0)
@@ -31,6 +30,7 @@ void	*ft_realloc_thread_unsafe(void *ptr, size_t size)
 	current = find_block(ptr, &prev);
 	if (!current.block)
 		return (put_ret_addr_dbg(NULL));
+	size = align(size, PADDING);
 	if (size <= current.block->max_size)
 	{
 		current.block->size = size;
@@ -66,7 +66,7 @@ void	*ft_realloc(void *ptr, size_t size)
 		mutex_error("error mutex lock: ", ret);
 		return (NULL);
 	}
-	addr = ft_realloc_thread_unsafe(addr, size);
+	addr = ft_realloc_thread_unsafe(ptr, size);
 	if ((ret = pthread_mutex_unlock(&g_mutex)) != 0)
 		mutex_error("error mutex unlock: ", ret);
 	return (addr);

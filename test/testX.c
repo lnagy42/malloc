@@ -6,7 +6,7 @@
 /*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/17 17:04:33 by vcombey           #+#    #+#             */
-/*   Updated: 2018/09/15 14:08:34 by jfortin          ###   ########.fr       */
+/*   Updated: 2018/09/18 16:55:44 by jfortin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 // void    ft_show_alloc_mem(void);
 void    *ft_realloc(void *ptr, size_t size);
 #define TEST_LENGTH 1000
-#define MAX_ALLOC 500
+#define MAX_ALLOC 5000
 #define NB_TESTS 1000
 
 struct test {

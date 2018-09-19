@@ -6,7 +6,7 @@
 #    By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/11 14:19:41 by jfortin           #+#    #+#              #
-#    Updated: 2018/09/13 17:49:39 by jfortin          ###   ########.fr        #
+#    Updated: 2018/09/19 16:35:03 by jfortin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,10 @@ SRC_NAME = malloc.c\
 		free.c\
 		realloc.c\
 		show_alloc_mem.c\
-		print_debug.c
+		print_debug.c\
+		ft_memcpy.c\
+		ft_memset.c\
+		calloc.c
 
 SRC_DIR = src
 BUILD_DIR = obj
@@ -49,7 +52,7 @@ opti:
 		@$(MAKE) all -j
 
 debug:
-		@$(MAKE) DEBUG=yes
+		@$(MAKE) opti DEBUG=yes
 
 all: $(NAME)
 

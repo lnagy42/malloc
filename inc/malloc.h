@@ -41,15 +41,19 @@ pthread_mutex_t		g_mutex;
 void	*ft_malloc(size_t size);
 void	ft_free(void *ptr);
 void	*ft_realloc(void *ptr, size_t size);
+void	*calloc(size_t count, size_t size);
 void	show_alloc_mem(void);
 void	*ft_malloc_thread_unsafe(size_t size);
+void	*ft_realloc_thread_unsafe(void *ptr, size_t size);
 void	ft_free_thread_unsafe(void *ptr);
 void	mutex_error(char *s, int ret);
 void	ft_putstr(char *s);
+void	ft_putstr_fd(char *s, int ret);
 void	ft_putsize_base(size_t size, unsigned int base);
 void	ft_putaddr(void *addr);
 t_zone	find_block(void *ptr,t_zone *prev);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
+void	*ft_memset(void *s, int c, size_t n);
 size_t	align(size_t size, size_t align);
 
 

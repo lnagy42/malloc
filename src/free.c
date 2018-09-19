@@ -6,7 +6,7 @@
 /*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/08 14:21:09 by jfortin           #+#    #+#             */
-/*   Updated: 2018/09/15 13:56:20 by jfortin          ###   ########.fr       */
+/*   Updated: 2018/09/19 17:48:48 by jfortin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,12 @@ t_zone	find_block(void *ptr, t_zone *prev)
 			{
 				current.block = (t_block *)current.region->data;
 				prev->block = NULL;
+				// if ptr in range of region do |
+				//								v
+				// if (ptr >= current.region && ptr <= current.region)
 				while (current.block)
 				{
-					if (ptr == current.block->data)
+					if (ptr == current.block->data && current.block->used)
 						return (current);
 					prev->block = current.block;
 					current.block = current.block->next;
@@ -84,25 +87,13 @@ void	ft_free_thread_unsafe(void *ptr)
 	put_request_free_dbg(ptr);
 	if (ptr)
 		current = find_block(ptr, &prev);
-	if (!ptr || !current.block)
+	if (!ptr || !current.block || !current.block->used)
 		return ;
 	current.block->used = 0;
 	if (!current.block->next)
 		free_last_block(&prev, &current);
 	else
 	{
-		// if (!current.block->next->used)
-		// {
-		// 	if (!prev.block->next->used && prev.block == (t_block *)current.region->data && !current.block->next->next)
-				// free_region(&prev, &current);
-		// 	else
-		// 	{
-		// 		current.block->max_size += current.block->next->max_size + sizeof(t_block);
-		// 		current.block->size = current.block->max_size;
-				// current.block->next = current.block->next->next;
-		// 	}
-		// }
-
 		if (current.block->next->used == 0)
 		{
 			current.block->max_size += current.block->next->max_size + sizeof(t_block);

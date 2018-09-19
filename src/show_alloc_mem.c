@@ -104,7 +104,11 @@ void	ft_putstr_fd(char *s, int fd)
 
 void	mutex_error(char *s, int ret)
 {
-	ft_putstr_fd(s, 2);
+	if (DEBUG)
+	{
+		ft_putstr_fd(s, 2);
+		ft_putsize_base((size_t)ret, 10);
+	}
 }
 
 void	show_alloc_mem_thread_unsafe(void)

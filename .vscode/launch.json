@@ -8,11 +8,13 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "enter program name, for example ${workspaceFolder}/a.out",
+            "program": "/usr/bin/vim",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
+            "environment": [{"name":"DYLD_LIBRARY_PATH", "value":"./"},
+                {"name":"DYLD_INSERT_LIBRARIES", "value":"libft_malloc.so"},
+                {"name":"DYLD_FORCE_FLAT_NAMESPACE", "value":"1"}],
             "externalConsole": true,
             "MIMode": "lldb"
         }

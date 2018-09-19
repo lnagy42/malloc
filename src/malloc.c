@@ -1,6 +1,8 @@
 #include "../inc/malloc.h"
 #include <sys/mman.h>
 #include <unistd.h>
+#include <stdint.h>
+
 
 pthread_mutex_t g_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
@@ -40,7 +42,7 @@ t_block		**choose_list(size_t size, size_t *region_size)
 	else
 	{
 		begin_list = &g_begin.large;
-		*region_size = align(size, getpagesize());
+		*region_size = align(size + 2 * sizeof(t_block), getpagesize());
 	}
 	return (begin_list);
 }
@@ -62,10 +64,11 @@ t_block		*init_region(t_block **region, size_t size, size_t region_size)
 	{
 		if ((*region = mmap(NULL, region_size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
 		{
-			ft_putstr("MAP FAILED !\n");
+			ft_putstr_fd("MAP FAILED !\n", 2);
 			return (NULL);
 		}
 		(*region)->size = region_size;
+		(*region)->max_size = region_size;
 		(*region)->used = 1;
 		(*region)->next = NULL;
 		create_block(size, (t_block *)(*region)->data);
@@ -104,9 +107,9 @@ t_block	*pushback_block(size_t size, size_t region_size, t_block *region)
 			size_left = region->size - ((size_t)end_region - (size_t)region);
 			if (size_left >= size + sizeof(t_block))
 			{
-				prev.block->next = end_region;
-				prev.block->next->max_size = size;
-				return (create_block(size, end_region));
+				prev.block->next = end_region; //
+				prev.block->next->max_size = size; // simplification
+				return (create_block(size, end_region)); //
 			}
 		}
 		prev.region = region;
@@ -125,6 +128,8 @@ void	*ft_malloc_thread_unsafe(size_t size)
 	size_t	region_size;
 
 	put_request_malloc_dbg(size);
+	if (size >= SIZE_MAX - 2 * sizeof(t_block))
+		return (put_ret_addr_dbg(NULL));
 	size = align(size, PADDING);
 	list = choose_list(size, &region_size);
 	if ((region = init_region(list, size, region_size)))
