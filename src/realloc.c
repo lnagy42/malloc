@@ -6,7 +6,7 @@
 /*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/13 17:46:16 by jfortin           #+#    #+#             */
-/*   Updated: 2018/09/19 16:50:08 by jfortin          ###   ########.fr       */
+/*   Updated: 2018/09/20 15:08:46 by jfortin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	*ft_realloc_thread_unsafe(void *ptr, size_t size)
 	return (new_addr);
 }
 
-void	*ft_realloc(void *ptr, size_t size)
+void	*realloc(void *ptr, size_t size)
 {
 	int	ret;
 	t_block	*addr;

@@ -139,7 +139,7 @@ void	*ft_malloc_thread_unsafe(size_t size)
 	return (put_ret_addr_dbg(NULL));
 }
 
-void	*ft_malloc(size_t size)
+void	*malloc(size_t size)
 {
 	int	ret;
 	t_block	*addr;

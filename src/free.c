@@ -6,7 +6,7 @@
 /*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/08 14:21:09 by jfortin           #+#    #+#             */
-/*   Updated: 2018/09/19 17:48:48 by jfortin          ###   ########.fr       */
+/*   Updated: 2018/09/20 15:07:44 by jfortin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	ft_free_thread_unsafe(void *ptr)
 	}
 }
 
-void	ft_free(void *ptr)
+void	free(void *ptr)
 {
 	int	ret;
 
