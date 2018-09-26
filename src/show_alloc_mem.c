@@ -1,60 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   show_alloc_mem.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnagy <lnagy@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/26 17:58:11 by lnagy             #+#    #+#             */
+/*   Updated: 2018/09/26 18:12:05 by lnagy            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/malloc.h"
 #include <unistd.h>
-
-int		ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-void	ft_putstr(char *s)
-{
-	write(1, s, ft_strlen(s));
-}
-
-size_t		ft_size(size_t size, unsigned int base)
-{
-	size_t	power;
-
-	power = 1;
-	while (size /= base)
-		power *= base;
-	return (power);
-}
-
-void	ft_putsize_base(size_t size, unsigned int base)
-{
-	char	buff[66];
-	static const char	table[16] = "0123456789ABCDEF";
-	size_t	power;
-	int		i;
-
-	power = ft_size(size, base);
-	i = 0;
-	if (base == 16)
-	{
-		buff[0] = '0';
-		buff[1] = 'x';
-		i = 2;
-	}
-	while (power)
-	{
-		buff[i++] = table[size / power];
-		size -= (size / power) * power;
-		power /= base;
-	}
-	buff[i] = '\0';
-	ft_putstr(buff);
-}
-
-void	ft_putaddr(void *addr)
-{
-	ft_putsize_base((size_t)addr, 16);
-}
 
 void	check_ifused_or_dbg(t_block *block, size_t *total)
 {
@@ -96,15 +53,10 @@ void	put_region(t_block *beginlist_region, char *area, size_t *total)
 		while (block)
 		{
 			check_ifused_or_dbg(block, total);
-			block = block->next;	
+			block = block->next;
 		}
 		beginlist_region = beginlist_region->next;
 	}
-}
-
-void	ft_putstr_fd(char *s, int fd)
-{
-	write(fd, s, ft_strlen(s));
 }
 
 void	mutex_error(char *s, int ret)

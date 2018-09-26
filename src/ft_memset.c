@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lnagy <lnagy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/19 15:27:51 by jfortin           #+#    #+#             */
-/*   Updated: 2018/09/19 16:37:30 by jfortin          ###   ########.fr       */
+/*   Updated: 2018/09/26 18:15:11 by lnagy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	*ft_memset2(void *s, int c, size_t n)
 	}
 	return (s);
 }
-
 
 void	*ft_memset4(void *s, int c, size_t n)
 {

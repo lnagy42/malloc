@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   calloc.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lnagy <lnagy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/09/19 14:47:31 by jfortin           #+#    #+#             */
-/*   Updated: 2018/09/20 15:05:01 by jfortin          ###   ########.fr       */
+/*   Created: 2018/09/08 14:21:09 by lnagy             #+#    #+#             */
+/*   Updated: 2018/09/26 18:16:10 by lnagy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	*ft_calloc_thread_unsafe(size_t count, size_t size)
 
 void	*calloc(size_t count, size_t size)
 {
-	int	ret;
+	int		ret;
 	t_block	*addr;
 
 	if ((ret = pthread_mutex_lock(&g_mutex)) != 0)

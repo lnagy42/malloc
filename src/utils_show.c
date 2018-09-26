@@ -1,30 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memcpy.c                                        :+:      :+:    :+:   */
+/*   utils_show.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnagy <lnagy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/30 19:15:38 by lnagy             #+#    #+#             */
-/*   Updated: 2018/09/26 18:15:39 by lnagy            ###   ########.fr       */
+/*   Created: 2018/09/26 17:54:00 by lnagy             #+#    #+#             */
+/*   Updated: 2018/09/26 18:08:43 by lnagy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/malloc.h"
+#include <unistd.h>
 
-void	*ft_memcpy(void *dest, const void *src, size_t n)
+void	ft_putstr_fd(char *s, int fd)
 {
-	char	*tmp;
-	char	*src_2;
-	size_t	i;
+	write(fd, s, ft_strlen(s));
+}
 
-	src_2 = (char *)src;
-	tmp = (char *)dest;
+int		ft_strlen(char *str)
+{
+	int	i;
+
 	i = 0;
-	while (i < n)
-	{
-		tmp[i] = src_2[i];
+	while (str[i])
 		i++;
-	}
-	return (dest);
+	return (i);
+}
+
+void	ft_putstr(char *s)
+{
+	write(1, s, ft_strlen(s));
+}
+
+size_t	ft_size(size_t size, unsigned int base)
+{
+	size_t	power;
+
+	power = 1;
+	while (size /= base)
+		power *= base;
+	return (power);
+}
+
+void	ft_putaddr(void *addr)
+{
+	ft_putsize_base((size_t)addr, 16);
 }

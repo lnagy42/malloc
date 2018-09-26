@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   malloc.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnagy <lnagy@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/26 17:52:26 by lnagy             #+#    #+#             */
+/*   Updated: 2018/09/26 18:08:10 by lnagy            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MALLOC_H
 # define MALLOC_H
 # include <stddef.h>
 # include <sys/mman.h>
 # include <pthread.h>
+# include <stdint.h>
 
 # ifndef DEBUG
 #  define DEBUG 0
@@ -55,7 +68,15 @@ t_zone	find_block(void *ptr,t_zone *prev);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 void	*ft_memset(void *s, int c, size_t n);
 size_t	align(size_t size, size_t align);
-
+t_block	**choose_list(size_t size, size_t *region_size);
+t_block	*check_prevblock_pushback(size_t size, t_block *new_block,
+	t_block *region, t_zone *prev);
+t_block	*init_region(t_block **region, size_t size, size_t region_size);
+void	ft_putstr_fd(char *s, int fd);
+int		ft_strlen(char *str);
+void	ft_putstr(char *s);
+size_t	ft_size(size_t size, unsigned int base);
+void	ft_putaddr(void *addr);
 
 void	put_request_malloc_dbg(size_t size);
 void	put_request_free_dbg(void *addr);

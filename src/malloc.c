@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   malloc.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnagy <lnagy@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/08 14:21:09 by lnagy             #+#    #+#             */
+/*   Updated: 2018/09/26 18:12:23 by lnagy            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/malloc.h"
 #include <sys/mman.h>
 #include <unistd.h>
@@ -5,25 +17,23 @@
 
 pthread_mutex_t g_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
-size_t		align(size_t size, size_t align)
+t_block	*check_newblock_pushback(size_t size, t_block *new_block, t_zone *prev)
 {
-	size_t	shift;
-	size_t	temp;
-
-	if (size <= align)
-		return (align);
-	temp = align;
-	shift = 0;
-	while (temp >= 2)
+	while (new_block)
 	{
-		shift++;
-		temp >>= 1;
+		if (new_block->used == 0 && new_block->max_size >= size)
+		{
+			new_block->size = size;
+			new_block->used = 1;
+			return (new_block);
+		}
+		prev->block = new_block;
+		new_block = new_block->next;
 	}
-	/* decalage binaire droite ">>" == "diviser par multiple de 2". shift == calculer l'alignement (1 en binaire == /2)*/
-	return ((((size - 1) >> shift) << shift) + align);
+	return (NULL);
 }
 
-t_block		**choose_list(size_t size, size_t *region_size)
+t_block	**choose_list(size_t size, size_t *region_size)
 {
 	t_block	**begin_list;
 
@@ -45,72 +55,6 @@ t_block		**choose_list(size_t size, size_t *region_size)
 	return (begin_list);
 }
 
-t_block		*create_block(size_t size, t_block *new_block)
-{
-	new_block->size = size;
-	new_block->max_size = size;
-	new_block->used = 1;
-	new_block->next = NULL;
-	return (new_block);
-}
-
-t_block		*init_region(t_block **region, size_t size, size_t region_size)
-{
-	if (!*region)
-	{
-		if ((*region = mmap(NULL, region_size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		{
-			ft_putstr_fd("MAP FAILED !\n", 2);
-			return (NULL);
-		}
-		(*region)->size = region_size;
-		(*region)->max_size = region_size;
-		(*region)->used = 1;
-		(*region)->next = NULL;
-		create_block(size, (t_block *)(*region)->data);
-		return (*region);
-	}
-	return (NULL);
-}
-
-t_block	*check_prevblock_pushback(size_t size, t_block *new_block, t_block *region, t_zone *prev)
-{
-	t_block	*end_region;
-	size_t	size_left;
-
-	end_region = 0;
-	size_left = 0;
-	if (prev->block)
-	{
-		end_region = (t_block *)(prev->block->data + prev->block->max_size);
-		size_left = region->size - ((size_t)end_region - (size_t)region);
-		if (size_left >= size + sizeof(t_block))
-		{
-			prev->block->next = end_region; //
-			prev->block->next->max_size = size; // simplification
-			return (create_block(size, end_region)); //
-		}
-	}
-	return (new_block);
-}
-
-t_block	*check_newblock_pushback(size_t size, t_block *new_block, t_zone *prev)
-{
-	while (new_block)
-	{
-		if (new_block->used == 0 && new_block->max_size >= size)
-		{
-			new_block->size = size;
-			// new_block->max_size = size;
-			new_block->used = 1;
-			return (new_block);
-		}
-		prev->block = new_block;
-		new_block = new_block->next;
-	}
-	return (NULL);
-}
-
 t_block	*pushback_block(size_t size, size_t region_size, t_block *region)
 {
 	t_block	*new_block;
@@ -123,7 +67,8 @@ t_block	*pushback_block(size_t size, size_t region_size, t_block *region)
 		new_block = (t_block *)region->data;
 		if ((new_block = check_newblock_pushback(size, new_block, &prev)))
 			return (new_block);
-		if ((new_block = check_prevblock_pushback(size, new_block, region, &prev)))
+		if ((new_block = check_prevblock_pushback(size, new_block, region,
+			&prev)))
 			return (new_block);
 		prev.region = region;
 		region = region->next;
@@ -154,7 +99,7 @@ void	*ft_malloc_thread_unsafe(size_t size)
 
 void	*malloc(size_t size)
 {
-	int	ret;
+	int		ret;
 	t_block	*addr;
 
 	if ((ret = pthread_mutex_lock(&g_mutex)) != 0)

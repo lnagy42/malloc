@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+         #
+#    By: lnagy <lnagy@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/11 14:19:41 by jfortin           #+#    #+#              #
-#    Updated: 2018/09/19 16:35:03 by jfortin          ###   ########.fr        #
+#    Updated: 2018/09/26 18:07:05 by lnagy            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,12 +32,16 @@ NAME = libft_malloc_$(HOSTTYPE).so
 LINK = libft_malloc.so
 
 SRC_NAME = malloc.c\
+		utils_mlloc.c\
 		free.c\
+		utils_free.c\
 		realloc.c\
 		show_alloc_mem.c\
+		utils_show.c\
 		print_debug.c\
 		ft_memcpy.c\
 		ft_memset.c\
+		put_size_base.c\
 		calloc.c
 
 SRC_DIR = src
