@@ -12,12 +12,40 @@
 
 #include "../inc/malloc.h"
 
+void	*check_size_n_used(void *ptr, size_t size, t_zone *current)
+{
+	size_t	left_region;
+
+	if (!current->block)
+		return (put_ret_addr_dbg(NULL));
+	size = align(size, PADDING);
+	if (size <= current->block->max_size)
+	{
+		current->block->size = size;
+		return (put_ret_addr_dbg(ptr));
+	}
+	if (current->block->next && !current->block->next->used && (current->block->next->size + current->block->size + sizeof(t_block) >= size))
+	{
+		current->block->size = current->block->next->size + current->block->size + sizeof(t_block);
+		current->block->max_size = current->block->size;
+		current->block->next = current->block->next->next;
+		return (put_ret_addr_dbg(ptr));
+	}
+	left_region = current->region->size - ((size_t)current->block->data - (size_t)current->region);
+	if (!current->block->next && left_region >= size)
+	{
+		current->block->size = size;
+		current->block->max_size = size;
+		return (put_ret_addr_dbg(ptr));
+	}
+	return (put_ret_addr_dbg(NULL));
+}
+
 void	*ft_realloc_thread_unsafe(void *ptr, size_t size)
 {
 	t_zone	current;
 	t_zone	prev;
 	void	*new_addr;
-	size_t	left_region;
 
 	put_request_realloc_dbg(ptr, size);
 	if (!ptr)
@@ -31,25 +59,9 @@ void	*ft_realloc_thread_unsafe(void *ptr, size_t size)
 	if (!current.block)
 		return (put_ret_addr_dbg(NULL));
 	size = align(size, PADDING);
-	if (size <= current.block->max_size)
-	{
-		current.block->size = size;
+	if (ptr == check_size_n_used(ptr, size, &current))
 		return (put_ret_addr_dbg(ptr));
-	}
-	if (current.block->next && !current.block->next->used && (current.block->next->size + current.block->size + sizeof(t_block) >= size))
-	{
-		current.block->size = current.block->next->size + current.block->size + sizeof(t_block);
-		current.block->max_size = current.block->size;
-		current.block->next = current.block->next->next;
-		return (put_ret_addr_dbg(ptr));
-	}
-	left_region = current.region->size - ((size_t)current.block->data - (size_t)current.region);
-	if (!current.block->next && left_region >= size)
-	{
-		current.block->size = size;
-		current.block->max_size = size;
-		return (put_ret_addr_dbg(ptr));
-	}
+	
 	new_addr = ft_malloc_thread_unsafe(size);
 	new_addr = ft_memcpy(new_addr, ptr, current.block->size);
 	ft_free_thread_unsafe(ptr);

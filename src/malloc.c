@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <stdint.h>
 
-
 pthread_mutex_t g_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
 size_t		align(size_t size, size_t align)
@@ -27,7 +26,6 @@ size_t		align(size_t size, size_t align)
 t_block		**choose_list(size_t size, size_t *region_size)
 {
 	t_block	**begin_list;
-	// t_block	*begin_region;
 
 	if (size <= 2048)
 	{
@@ -58,8 +56,6 @@ t_block		*create_block(size_t size, t_block *new_block)
 
 t_block		*init_region(t_block **region, size_t size, size_t region_size)
 {
-	// t_block	*init_block;
-
 	if (!*region)
 	{
 		if ((*region = mmap(NULL, region_size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
@@ -77,41 +73,58 @@ t_block		*init_region(t_block **region, size_t size, size_t region_size)
 	return (NULL);
 }
 
+t_block	*check_prevblock_pushback(size_t size, t_block *new_block, t_block *region, t_zone *prev)
+{
+	t_block	*end_region;
+	size_t	size_left;
+
+	end_region = 0;
+	size_left = 0;
+	if (prev->block)
+	{
+		end_region = (t_block *)(prev->block->data + prev->block->max_size);
+		size_left = region->size - ((size_t)end_region - (size_t)region);
+		if (size_left >= size + sizeof(t_block))
+		{
+			prev->block->next = end_region; //
+			prev->block->next->max_size = size; // simplification
+			return (create_block(size, end_region)); //
+		}
+	}
+	return (new_block);
+}
+
+t_block	*check_newblock_pushback(size_t size, t_block *new_block, t_zone *prev)
+{
+	while (new_block)
+	{
+		if (new_block->used == 0 && new_block->max_size >= size)
+		{
+			new_block->size = size;
+			// new_block->max_size = size;
+			new_block->used = 1;
+			return (new_block);
+		}
+		prev->block = new_block;
+		new_block = new_block->next;
+	}
+	return (NULL);
+}
+
 t_block	*pushback_block(size_t size, size_t region_size, t_block *region)
 {
 	t_block	*new_block;
-	t_block	*end_region;
 	t_zone	prev;
-	size_t	size_left;
 
 	prev.region = NULL;
 	while (region)
 	{
 		prev.block = NULL;
 		new_block = (t_block *)region->data;
-		while (new_block)
-		{
-			if (new_block->used == 0 && new_block->max_size >= size)
-			{
-				new_block->size = size;
-				// new_block->max_size = size;
-				new_block->used = 1;
-				return (new_block);
-			}
-			prev.block = new_block;
-			new_block = new_block->next;
-		}
-		if (prev.block)
-		{
-			end_region = (t_block *)(prev.block->data + prev.block->max_size);
-			size_left = region->size - ((size_t)end_region - (size_t)region);
-			if (size_left >= size + sizeof(t_block))
-			{
-				prev.block->next = end_region; //
-				prev.block->next->max_size = size; // simplification
-				return (create_block(size, end_region)); //
-			}
-		}
+		if ((new_block = check_newblock_pushback(size, new_block, &prev)))
+			return (new_block);
+		if ((new_block = check_prevblock_pushback(size, new_block, region, &prev)))
+			return (new_block);
 		prev.region = region;
 		region = region->next;
 	}

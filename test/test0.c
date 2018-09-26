@@ -1,6 +1,6 @@
-#include "../inc/malloc.h"
+/* #include "../inc/malloc.h" */
 
-int	main()
+int	main(void)
 {
 	int	i;
 	char	*addr;

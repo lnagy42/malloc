@@ -56,6 +56,32 @@ void	ft_putaddr(void *addr)
 	ft_putsize_base((size_t)addr, 16);
 }
 
+void	check_ifused_or_dbg(t_block *block, size_t *total)
+{
+	if (block->used)
+	{
+		ft_putaddr(block->data);
+		ft_putstr(" - ");
+		ft_putaddr(block->data + block->size);
+		ft_putstr(" : ");
+		ft_putsize_base(block->size, 10);
+		ft_putstr(" octets | max: ");
+		ft_putsize_base(block->max_size, 10);
+		ft_putstr("\n");
+		*total += block->size;
+	}
+	else if (DEBUG)
+	{
+		ft_putaddr(block->data);
+		ft_putstr(" - ");
+		ft_putaddr(block->data + block->size);
+		ft_putstr(" : ");
+		ft_putstr(" *freed* ");
+		ft_putsize_base(block->max_size, 10);
+		ft_putstr(" octets\n");
+	}
+}
+
 void	put_region(t_block *beginlist_region, char *area, size_t *total)
 {
 	t_block	*block;
@@ -69,28 +95,7 @@ void	put_region(t_block *beginlist_region, char *area, size_t *total)
 		block = (t_block *)beginlist_region->data;
 		while (block)
 		{
-			if (block->used)
-			{
-				ft_putaddr(block->data);
-				ft_putstr(" - ");
-				ft_putaddr(block->data + block->size);
-				ft_putstr(" : ");
-				ft_putsize_base(block->size, 10);
-				ft_putstr(" octets | max: ");
-				ft_putsize_base(block->max_size, 10);
-				ft_putstr("\n");
-				*total += block->size;
-			}
-			else if (DEBUG)
-			{
-				ft_putaddr(block->data);
-				ft_putstr(" - ");
-				ft_putaddr(block->data + block->size);
-				ft_putstr(" : ");
-				ft_putstr(" *freed* ");
-				ft_putsize_base(block->max_size, 10);
-				ft_putstr(" octets\n");
-			}
+			check_ifused_or_dbg(block, total);
 			block = block->next;	
 		}
 		beginlist_region = beginlist_region->next;

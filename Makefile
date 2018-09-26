@@ -19,7 +19,7 @@ else
 endif
 
 ifeq ($(PADDING),)
-	CFLAGS += -D PADDING=8
+	CFLAGS += -D PADDING=16
 else
 	CFLAGS += -D PADDING=$(PADDING)
 endif
